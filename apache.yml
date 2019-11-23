@@ -2,8 +2,8 @@
 ---
 - hosts: all
   become: yes
-  become_user: root
-  become_method: sudo
+  #become_user: root
+  #become_method: sudo
   #remote_user: toor
   #sudo: yes
   tasks:
