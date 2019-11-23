@@ -1,7 +1,7 @@
 # main.yml
 ---
 - hosts: all
-  
+  sudo: yes
   tasks:
     - name: yum update
       action: yum name=* state=latest
