@@ -1,6 +1,7 @@
 # main.yml
 ---
 - hosts: all
+  remote_user: toor
   sudo: yes
   tasks:
     - name: yum update
