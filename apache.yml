@@ -1,8 +1,10 @@
 # main.yml
 ---
 - hosts: all
-  become: yes
-  become_user: root
+  #become: yes
+  #become_user: root
+  remote_user: toor
+  sudo: yes
   tasks:
     - name: yum update
       action: yum name=* state=latest
