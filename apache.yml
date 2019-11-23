@@ -1,0 +1,78 @@
+# main.yml
+---
+- hosts: CentosWeb01
+  
+  tasks:
+    - name: yum update
+      action: yum name=* state=latest
+
+    - name: yum install epel
+      yum: name=epel-release.noarch state=latest
+
+    - name: download remi repo rpm
+      get_url: url=http://rpms.famillecollet.com/enterprise/remi-release-7.rpm dest=/root/  
+
+    - name: install remi repo rpm
+      yum: name=/root/remi-release-7.rpm state=present
+
+    - name: 1. Installs necessary packages (Apache - PHP - ...)      
+      yum:
+        pkg: ["httpd", "httpd-tools", "git"]
+        state: latest
+    
+    - name: install php
+      yum: enablerepo=remi,remi-php73 name=php-mssql,php-pear,php,php-pdo,php-pecl-redis,php-xml,php-pecl-zip,php-pecl-jsonc,php-pecl-igbinary,php-mbstring state=latest
+
+    - name: install rsync
+      yum: name=rsync state=latest
+
+    #- name: change web root permission
+    #  sudo: yes
+    #  file: path=/var/www group=apache mode=0770 state=directory
+
+    #- name: change web root permission
+    #  sudo: yes
+    #  file: path=/var/www/html group=apache mode=0770 state=directory
+
+    #- name: change user permission
+    #  sudo: yes
+    #  user: name=admin groups=apache
+
+    - name: change php ini
+      ini_file: dest=/etc/php.ini
+                section=Date
+                option=date.timezone
+                value=Asia/Ho_Chi_Minh
+      ini_file: dest=/etc/php.ini
+                section=PHP
+                option=error_reporting
+                value='E_ALL & ~E_NOTICE'
+      ini_file: dest=/etc/php.ini
+                section=PHP
+                option=short_open_tag
+                value=On
+
+   
+      #copy: src=./html/ dest=/var/www/html/ mode=0770
+
+    - name: 4. Enable Apache on System Boot
+      service: name=httpd state=started enabled=yes
+
+      notify:
+      - start apache
+      - setup firewalld
+      - reload firewalld
+
+  handlers:
+    - name: start apache
+      service: name=httpd state=started enabled=yes
+
+    - name: setup firewalld
+      firewalld:
+        service: http
+        permanent: true
+        state: enabled
+        
+    - name: reload firewalld
+      service: name=firewalld state=restarted
+
