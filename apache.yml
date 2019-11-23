@@ -1,6 +1,6 @@
 # main.yml
 ---
-- hosts: CentosWeb01
+- hosts: all
   
   tasks:
     - name: yum update
